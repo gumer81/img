@@ -4,6 +4,7 @@
  * @param {Object|null} var001 - Datos a enviar (null para GET, objeto para POST).
  * @returns {Promise<string>} Respuesta del servidor como texto.
  */
+url = "ajx.php";
 async function jva000(var000, var001 = null) {
   // var002: Método HTTP (GET o POST)
   const var002 = var001 ? 'POST' : 'GET';
@@ -40,7 +41,6 @@ async function jva000(var000, var001 = null) {
  * @param {Object|null} var002 - Datos a enviar (null para GET, objeto para POST).
  */
 function jva001(var000, var001, var002 = null) {
-  // var003: Elemento HTML objetivo
   const var003 = document.getElementById(var001);
   if (!var003) {
     console.error(`Element with id "${var001}" not found`);
@@ -49,14 +49,21 @@ function jva001(var000, var001, var002 = null) {
 
   var003.innerHTML = 'Cargando...';
 
-  jva000(var000, var002)
-    .then(var004 => {
-      // var004: Texto de respuesta
-      var003.innerHTML = var004;
+  let var004 = var002;
+  if (typeof var002 === 'string' && var002.includes('=')) {
+    var004 = {};
+    var002.split('&').forEach(var005 => {
+      const [var006, var007] = var005.split('=');
+      var004[var006] = decodeURIComponent(var007);
+    });
+  }
+
+  jva000(var000, var004)
+    .then(var005 => {
+      var003.innerHTML = var005;
     })
-    .catch(var005 => {
-      // var005: Error capturado
-      var003.innerHTML = `Error: ${var005.message}`;
+    .catch(var006 => {
+      var003.innerHTML = `Error: ${var006.message}`;
     });
 }
 
@@ -72,8 +79,16 @@ function jva1() {
 }
 
 // Función AJAX para obtener archivos
-function jva2(var4, var5, var6) {
-    // Implementación de llamada AJAX
+function jva2(var0, var1) {
+    // Implementación de llamada AJAX carga la imagen
+    // var0 es el div donde se carga.
+    // var1
+    jva001(url,var5)
+}
+
+// Función para llamar a ajx.php para rotar imagen
+function jva3(var9, var10) {
+    // Implementación de llamada AJAX para rotar imagen
 }
 
 // Girar imagen a la derecha
@@ -86,9 +101,4 @@ function jva4() {
 function jva5() {
     var var8 = document.getElementById('imageView').src;
     jva3(var8, 'izquierda');
-}
-
-// Función para llamar a ajx.php para rotar imagen
-function jva3(var9, var10) {
-    // Implementación de llamada AJAX para rotar imagen
 }
