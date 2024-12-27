@@ -2,13 +2,13 @@
 // Función para cargar archivos de una carpeta
 function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     // Número de imágenes por grupo
-    $var001 = 20;
+    //var1 carpeta global var2, usuario , varx3 clave, varx4 desde que orden de archivo mas grande.
+    $var001 = 10;
 
     // Calcular el índice inicial según $vrx4
     $var002 = $vrx4 * $var001;
 
     // Comando para encontrar las imágenes y ordenar por tamaño
-    // Usamos curl para autenticar y luego find para listar los archivos
     $cmd = sprintf(
         "curl -u %s -s %s | find %s -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' \\) -exec du -b {} + | sort -n -r | awk 'NR > %d && NR <= (%d + %d)'",
         escapeshellarg($vrx2 . ':' . $vrx3),
@@ -27,11 +27,9 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
         return "No hay imágenes disponibles en este rango.";
     }
 
-    // Procesar la salida y generar la tabla HTML
+    // Procesar la salida y almacenar en una matriz
     $lns = explode("\n", trim($out));
-    $result = "<table valign='top'>";
-    $result .= "<tr><th rowspan='2'>Imagen</th><th>Tamaño (KB)</th></tr>";
-    $result .= "<tr><th>AltxAnc</th></tr>";
+    $mtx = []; // Matriz para almacenar información de las imágenes
 
     foreach ($lns as $lin) {
         if (preg_match('/(\d+)\s+(.*)/', $lin, $mat)) {
@@ -39,32 +37,96 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
             $imagePath = trim($mat[2]);
 
             // Convertir la ruta del sistema de archivos a una URL relativa
-            // Suponiendo que el root del servidor es '/home/www/' y el acceso es '/intranet/documentos/'
             $relativePath = str_replace('/home/www', '', $imagePath);
 
             // Obtener las dimensiones de la imagen
             list($x, $y) = getimagesize($imagePath);
 
-            // Generar la fila de la tabla HTML
-            $result .= "<tr>";
-            $result .= "<td rowspan='2'><img src='" . htmlspecialchars($relativePath) . "' width='100'></td>";
-            $result .= "<td>$peso KB</td></tr><tr>";
-            $result .= "<td>$x x $y</td>"; // Agregar dimensiones
-            $result .= "</tr>";
+            // Almacenar en la matriz
+            $mtx[] = [
+                'nombre' => htmlspecialchars($relativePath),
+                'peso' => $peso,
+                'dimensiones' => "$x x $y"
+            ];
         }
     }
 
-    $result .= "</table>";
+    // Generar la salida HTML
+    $result = "<table valign='top'>";
+    $result .= "<tr><th rowspan='3'>Imagen</th><th>Tamaño (KB)</th></tr>";
+    $result .= "<tr><th>AltxAnc</th></tr>";
+    $result .= "<tr><th>Chkbox</th></tr>";
 
-    return $result;
+        // Verificar similitud con anterior
+   for ($i = 0; $i < count($mtx); $i++) {
+    // Generar la fila de la tabla HTML
+    $result .= "<tr>";
+    $result .= "<td rowspan='3'><a href=\"javascript:jva2('".$mtx[$i]['nombre']."')\">";
+    $result .= "<img src='".$mtx[$i]['nombre']."' width='70'></a></td>";
+    $result .= "<td>" . $mtx[$i]['peso'] . " KB</td></tr><tr>";
+    $result .= "<td>" . $mtx[$i]['dimensiones'] . "</td></tr>"; // Agregar dimensiones
+
+    // Inicializar el checkbox como un guion
+    $checkbox = "<td>-</td>";
+
+    // Verificar similitud con anterior
+    if ($i > 0 &&
+        $mtx[$i]['peso'] == $mtx[$i - 1]['peso'] &&
+        $mtx[$i]['dimensiones'] == $mtx[$i - 1]['dimensiones']) {
+        // Checkbox si es similar al anterior
+        $checkbox = "<td><input type='checkbox'></td>";
+    } elseif ($i < count($mtx) - 1 &&
+              $mtx[$i]['peso'] == $mtx[$i + 1]['peso'] &&
+              $mtx[$i]['dimensiones'] == $mtx[$i + 1]['dimensiones']) {
+        // Checkbox si es similar al siguiente
+        $checkbox = "<td><input type='checkbox' name='chk0' onchange='javascript:jva3();' value='".$mtx[$i]['nombre']."' ></td>";
+    }
+
+    // Añadir el checkbox a la fila
+        $result .= $checkbox;
+        $result .= "</tr>";
+    }
+
+    return "$result</table>";
 }
 
+// Función para visualiar la imagen.
+function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
+    // Ruta del archivo que se intenta cargar
 
+    $plf = strrpos($vrx4, '/'); // Encontrar la posición de la última barra
+    if ($plf !== false) {
+        $vrx4 = substr($vrx4, $plf + 1); // Asignar solo el nombre del archivo a vrx4
+    }
 
-// Función para rotar imágenes
-function fnc2($vrx4, $vrx5) {
-    // Implementación para rotar la imagen $vrx4 en dirección $vrx5 (derecha/izquierda)
+    $filePath = $vrx1.'/'. $vrx4; // Construir la ruta completa del archivo
+
+    // Verificar si el archivo existe
+    if (file_exists($filePath)) {
+        // Convertir la ruta del sistema de archivos a una URL relativa
+        $relativePath = str_replace('/home/www', '', $filePath);
+        return "<img src='".htmlspecialchars($relativePath)."' alt='".htmlspecialchars($vrx4)."' width='600'>";
+    } else {
+        // Si el archivo no existe, buscar la imagen más grande en la carpeta
+        $cmd = sprintf(
+            "find %s -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' \\) -exec du -b {} + | sort -n -r | head -n 1 | awk '{print $2}'",
+            escapeshellarg($vrx1)
+        );
+
+        // Ejecutar el comando para obtener la imagen más grande
+        $largestImagePath = shell_exec($cmd);
+
+        // Verificar si se encontró una imagen
+        if ($largestImagePath) {
+            // Convertir la ruta del sistema de archivos a una URL relativa
+            $relativePath = str_replace('/home/www', '', trim($largestImagePath));
+            return "<img src='" . htmlspecialchars($relativePath) . "' alt='Imagen más grande' width='80%'>";
+        } else {
+            return "No hay imágenes disponibles en esta carpeta.";
+        }
+    }
 }
+
 
 // Otras funciones necesarias...
 

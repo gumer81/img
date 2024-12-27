@@ -99,3 +99,24 @@ function jva1(var0) {
     // Llamada a jva001
     jva001(url, "div2", var5);
 }
+
+//Carga la imagen var0.
+function jva2(var0){
+  const var1 = document.getElementById('input1').value; // Carpeta
+  const var2 = document.getElementById('input2').value; // Usuario
+  const var3 = document.getElementById('input3').value; // Contraseña
+
+    // Crear objeto de datos
+  const var5 ="crp="+var1+"&usr="+var2+"&psw="+var3+"&img="+var0+"&funcion=fnc2"; // Especificar la función PHP a llamar
+    // Llamada a jva001
+  jva001(url, "div3", var5);
+}
+
+function jva3(){
+  //Si hay mas de uncheckbox en checked del nombre chk0 se ejecuta
+  const checkboxes = document.querySelectorAll('input[name="chk0"]:checked');
+  // Contar la cantidad de checkboxes seleccionados
+  const count = checkboxes.length;
+  alert("Número de checkboxes seleccionados: " + count);
+
+}
