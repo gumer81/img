@@ -88,12 +88,14 @@ function jva001(var000, var001, var002 = null, var003 = 'fnc000') {
 
 // Recargar la lista de archivos
 
-function jva1() {
-    var var1 = document.getElementById('input1').value;
-    var var2 = document.getElementById('input2').value;
-    var var3 = document.getElementById('input3').value;
-    // Llamada AJAX para obtener los archivos
-    jva2(var1, var2, var3);
+function jva1(var0) {
+    //var0 es el limite de lista de archivos. desde el 0, hasta el numero total de archivos de imagenes / 20 (2 por pagina.)
+    var var1 = document.getElementById('input1').value;//Carpeta
+    var var2 = document.getElementById('input2').value;//Usuario
+    var var3 = document.getElementById('input3').value;//Contraseña
+    // Llamada AJAX para obtener la lista de los archivos archivos
+    var000 = "crp="+var1+"&usr="+var2+"&psw="+var3+"&lmt="+var0;
+    jva2(url, "div2",var000,"fnc1");
 }
 
 // Función AJAX para obtener archivos
