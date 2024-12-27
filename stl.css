@@ -1,1 +1,12 @@
+body {
+    font-family: Arial, sans-serif;
+}
 
+#div1, #div2, #div3 {
+    margin: 20px;
+}
+
+#imageView {
+    max-width: 100%;
+    max-height: 500px;
+}
