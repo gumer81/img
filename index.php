@@ -12,7 +12,7 @@
     <div id="div1">
         <input type="text" id="input1" value="/home/www/intranet/documentos/">
         <input type="text" id="input2" value="colaborador" placeholder="colaborador">
-        <input type="password" id="input3" value="excelencia">
+        <input type="password" id="input3" value="">
         <button onclick="jva1(0)">Recargar</button>
     </div>
 </td></tr><tr><td>
