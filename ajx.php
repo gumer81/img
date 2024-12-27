@@ -20,31 +20,36 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     );
 
     // Ejecutar el comando
-    $output = shell_exec($cmd);
+    $out = shell_exec($cmd);
 
     // Verificar si hay salida
-    if (empty($output)) {
+    if (empty($out)) {
         return "No hay imágenes disponibles en este rango.";
     }
 
     // Procesar la salida y generar la tabla HTML
-    $lines = explode("\n", trim($output));
+    $lns = explode("\n", trim($out));
     $result = "<table valign='top'>";
-    $result .= "<tr><th>Imagen</th><th>Tamaño (KB)</th></tr>";
+    $result .= "<tr><th rowspan='2'>Imagen</th><th>Tamaño (KB)</th></tr>";
+    $result .= "<tr><th>AltxAnc</th></tr>";
 
-    foreach ($lines as $line) {
-        if (preg_match('/(\d+)\s+(.*)/', $line, $matches)) {
-            $size = round($matches[1] / 1024, 2); // Tamaño en KB
-            $imagePath = trim($matches[2]);
+    foreach ($lns as $lin) {
+        if (preg_match('/(\d+)\s+(.*)/', $lin, $mat)) {
+            $peso = round($mat[1] / 1024, 2); // Tamaño en KB
+            $imagePath = trim($mat[2]);
 
             // Convertir la ruta del sistema de archivos a una URL relativa
             // Suponiendo que el root del servidor es '/home/www/' y el acceso es '/intranet/documentos/'
             $relativePath = str_replace('/home/www', '', $imagePath);
 
+            // Obtener las dimensiones de la imagen
+            list($x, $y) = getimagesize($imagePath);
+
             // Generar la fila de la tabla HTML
             $result .= "<tr>";
-            $result .= "<td><img src='" . htmlspecialchars($relativePath) . "' width='100'></td>";
-            $result .= "<td>$size KB</td>";
+            $result .= "<td rowspan='2'><img src='" . htmlspecialchars($relativePath) . "' width='100'></td>";
+            $result .= "<td>$peso KB</td></tr><tr>";
+            $result .= "<td>$x x $y</td>"; // Agregar dimensiones
             $result .= "</tr>";
         }
     }
@@ -53,6 +58,7 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
 
     return $result;
 }
+
 
 
 // Función para rotar imágenes
