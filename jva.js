@@ -35,38 +35,56 @@ async function jva000(var000, var001 = null) {
 }
 
 /**
- * jva001: Actualiza el contenido de un elemento HTML con la respuesta de una solicitud AJAX.
- * @param {string} var000 - URL de la solicitud.
+ * jva001: Realiza una solicitud AJAX y actualiza el contenido de un elemento HTML.
+ * @param {string} var000 - URL del archivo PHP.
  * @param {string} var001 - ID del elemento HTML a actualizar.
- * @param {Object|null} var002 - Datos a enviar (null para GET, objeto para POST).
+ * @param {Object|string|null} var002 - Datos a enviar (objeto, cadena de consulta o null).
+ * @param {string} [var003='fnc000'] - Nombre de la función PHP a llamar.
  */
-function jva001(var000, var001, var002 = null) {
-  const var003 = document.getElementById(var001);
-  if (!var003) {
-    console.error(`Element with id "${var001}" not found`);
+function jva001(var000, var001, var002 = null, var003 = 'fnc000') {
+  // Obtener el elemento HTML objetivo
+  const var004 = document.getElementById(var001);
+  if (!var004) {
+    console.error(`Elemento con id "${var001}" no encontrado`);
     return;
   }
 
-  var003.innerHTML = 'Cargando...';
+  // Mostrar mensaje de carga
+  var004.innerHTML = 'Cargando...';
 
-  let var004 = var002;
+  // Procesar los datos de entrada
+  let var005 = var002 ? {...var002} : {};
   if (typeof var002 === 'string' && var002.includes('=')) {
-    var004 = {};
-    var002.split('&').forEach(var005 => {
-      const [var006, var007] = var005.split('=');
-      var004[var006] = decodeURIComponent(var007);
-    });
+    var005 = Object.fromEntries(new URLSearchParams(var002));
   }
 
-  jva000(var000, var004)
-    .then(var005 => {
-      var003.innerHTML = var005;
-    })
-    .catch(var006 => {
-      var003.innerHTML = `Error: ${var006.message}`;
-    });
-}
+  // Asignar la función PHP a llamar
+  var005.function = var003 || `fnc${Object.keys(var005).length.toString().padStart(3, '0')}`;
 
+  // Realizar la solicitud fetch
+  fetch(var000, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(var005)
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.text();
+  })
+  .then(var006 => {
+    // Actualizar el contenido del elemento HTML con la respuesta
+    var004.innerHTML = var006;
+  })
+  .catch(var007 => {
+    // Mostrar mensaje de error en caso de fallo
+    console.error('Error en la solicitud:', var007);
+    var004.innerHTML = `Error: ${var007.message}`;
+  });
+}
 
 // Recargar la lista de archivos
 
