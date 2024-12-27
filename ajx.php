@@ -2,6 +2,7 @@
 // Función para cargar archivos de una carpeta
 function fnc1($vrx1, $vrx2, $vrx3,$vrx4) {
     // Implementación para cargar archivos desde $vrx1 con autenticación $vrx2 y $vrx3
+    //vrx1 carpeta por defecto, vrx2 usuario vrx3 clave, vrx4 hoja de la lista de archivos. inicialmente los mas grandes desde 0.
 }
 
 // Función para rotar imágenes
