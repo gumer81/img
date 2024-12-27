@@ -4,7 +4,9 @@
  * @param {Object|null} var001 - Datos a enviar (null para GET, objeto para POST).
  * @returns {Promise<string>} Respuesta del servidor como texto.
  */
-url = "ajx.php";
+
+const url = "ajx.php"; // Declaración global de url
+
 async function jva000(var000, var001 = null) {
   // var002: Método HTTP (GET o POST)
   const var002 = var001 ? 'POST' : 'GET';
@@ -39,86 +41,61 @@ async function jva000(var000, var001 = null) {
  * @param {string} var000 - URL del archivo PHP.
  * @param {string} var001 - ID del elemento HTML a actualizar.
  * @param {Object|string|null} var002 - Datos a enviar (objeto, cadena de consulta o null).
- * @param {string} [var003='fnc000'] - Nombre de la función PHP a llamar.
  */
-function jva001(var000, var001, var002 = null, var003 = 'fnc000') {
+function jva001(var000, var001, var002 = null) {
   // Obtener el elemento HTML objetivo
-  const var004 = document.getElementById(var001);
-  if (!var004) {
+  const var003 = document.getElementById(var001);
+  if (!var003) {
     console.error(`Elemento con id "${var001}" no encontrado`);
     return;
   }
 
   // Mostrar mensaje de carga
-  var004.innerHTML = 'Cargando...';
+  var003.innerHTML = 'Cargando...';
 
-  // Procesar los datos de entrada
-  let var005 = var002 ? {...var002} : {};
-  if (typeof var002 === 'string' && var002.includes('=')) {
-    var005 = Object.fromEntries(new URLSearchParams(var002));
+  // Configurar opciones para la solicitud fetch
+  const fetchOptions = {
+    method: var002 ? 'POST' : 'GET',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  };
+
+  // Si hay datos para enviar, prepararlos para POST
+  if (var002) {
+    fetchOptions.body = typeof var002 === 'string'
+      ? var002
+      : new URLSearchParams(var002).toString();
   }
 
-  // Asignar la función PHP a llamar
-  var005.function = var003 || `fnc${Object.keys(var005).length.toString().padStart(3, '0')}`;
-
   // Realizar la solicitud fetch
-  fetch(var000, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(var005)
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.text();
-  })
-  .then(var006 => {
-    // Actualizar el contenido del elemento HTML con la respuesta
-    var004.innerHTML = var006;
-  })
-  .catch(var007 => {
-    // Mostrar mensaje de error en caso de fallo
-    console.error('Error en la solicitud:', var007);
-    var004.innerHTML = `Error: ${var007.message}`;
-  });
+  fetch(var000, fetchOptions)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(var004 => {
+      // Actualizar el contenido del elemento HTML con la respuesta
+      var003.innerHTML = var004;
+    })
+    .catch(var005 => {
+      // Mostrar mensaje de error en caso de fallo
+      console.error('Error en la solicitud:', var005);
+      var003.innerHTML = `Error: ${var005.message}`;
+    });
 }
 
 // Recargar la lista de archivos
 
 function jva1(var0) {
-    //var0 es el limite de lista de archivos. desde el 0, hasta el numero total de archivos de imagenes / 20 (2 por pagina.)
-    var var1 = document.getElementById('input1').value;//Carpeta
-    var var2 = document.getElementById('input2').value;//Usuario
-    var var3 = document.getElementById('input3').value;//Contraseña
-    // Llamada AJAX para obtener la lista de los archivos archivos
-    var000 = "crp="+var1+"&usr="+var2+"&psw="+var3+"&lmt="+var0;
-    jva2(url, "div2",var000,"fnc1");
-}
+    const var1 = document.getElementById('input1').value; // Carpeta
+    const var2 = document.getElementById('input2').value; // Usuario
+    const var3 = document.getElementById('input3').value; // Contraseña
 
-// Función AJAX para obtener archivos
-function jva2(var0, var1) {
-    // Implementación de llamada AJAX carga la imagen
-    // var0 es el div donde se carga.
-    // var1
-    jva001(url,var5)
-}
-
-// Función para llamar a ajx.php para rotar imagen
-function jva3(var9, var10) {
-    // Implementación de llamada AJAX para rotar imagen
-}
-
-// Girar imagen a la derecha
-function jva4() {
-    var var7 = document.getElementById('imageView').src;
-    jva3(var7, 'derecha');
-}
-
-// Girar imagen a la izquierda
-function jva5() {
-    var var8 = document.getElementById('imageView').src;
-    jva3(var8, 'izquierda');
+    // Crear objeto de datos
+    const var5 ="crp="+var1+"&usr="+var2+"&psw="+var3+"&lmt="+var0+"&funcion=fnc1"; // Especificar la función PHP a llamar
+    // Llamada a jva001
+    jva001(url, "div2", var5);
 }
