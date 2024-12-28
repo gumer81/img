@@ -37,14 +37,14 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
             $imagePath = trim($mat[2]);
 
             // Convertir la ruta del sistema de archivos a una URL relativa
-            $relativePath = str_replace('/home/www', '', $imagePath);
+            $pth = str_replace('/home/www', '', $imagePath);
 
             // Obtener las dimensiones de la imagen
             list($x, $y) = getimagesize($imagePath);
 
             // Almacenar en la matriz
             $mtx[] = [
-                'nombre' => htmlspecialchars($relativePath),
+                'nombre' => htmlspecialchars($pth),
                 'peso' => $peso,
                 'dimensiones' => "$x x $y"
             ];
@@ -103,18 +103,15 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
 function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
     // Ruta del archivo que se intenta cargar
 
-    $plf = strrpos($vrx4, '/'); // Encontrar la posición de la última barra
-    if ($plf !== false) {
-        $vrx4 = substr($vrx4, $plf + 1); // Asignar solo el nombre del archivo a vrx4
-    }
+    $vrx4 = basename($vrx4); // Encontrar la posición de la última barra
 
     $filePath = $vrx1.'/'. $vrx4; // Construir la ruta completa del archivo
 
     // Verificar si el archivo existe
     if (file_exists($filePath)) {
         // Convertir la ruta del sistema de archivos a una URL relativa
-        $relativePath = str_replace('/home/www', '', $filePath);
-        return "<img src='".htmlspecialchars($relativePath)."' alt='".htmlspecialchars($vrx4)."' width='600'>";
+        $pth = str_replace('/home/www', '', $filePath);
+        $rtn000 = "<img src='".htmlspecialchars($pth)."' alt='".htmlspecialchars($vrx4)."' width='800'>";
     } else {
         // Si el archivo no existe, buscar la imagen más grande en la carpeta
         $cmd = sprintf(
@@ -128,12 +125,13 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
         // Verificar si se encontró una imagen
         if ($largestImagePath) {
             // Convertir la ruta del sistema de archivos a una URL relativa
-            $relativePath = str_replace('/home/www', '', trim($largestImagePath));
-            return "<img src='" . htmlspecialchars($relativePath) . "' alt='Imagen más grande' width='80%'>";
+            $pth = str_replace('/home/www', '', trim($largestImagePath));
+            $rtn000 =  "<img src='" . htmlspecialchars($pth) . "' alt='Imagen más grande' width='80%'>";
         } else {
-            return "No hay imágenes disponibles en esta carpeta.";
+            $rtn000 =  "No hay imágenes disponibles en esta carpeta.";
         }
     }
+    return $rtn000;
 }
 
 function fnc3($vrx1, $vrx2, $vrx3, $vrx4) {
