@@ -71,7 +71,7 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     $checkbox = "<td>-</td>";
 
     // Verificar similitud con anterior
-    if ($i > 1 &&
+    if ($i > 0 &&
         $mtx[$i]['peso'] == $mtx[$i - 1]['peso'] &&
         $mtx[$i]['dimensiones'] == $mtx[$i - 1]['dimensiones']) {
         // Checkbox si es similar al anterior
