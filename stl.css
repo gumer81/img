@@ -1,12 +1,70 @@
+/* Estilo general del cuerpo */
 body {
     font-family: Arial, sans-serif;
+    background-color: #f5f5dc; /* Color crema */
+    color: #333; /* Color de texto oscuro */
+    margin: 0;
+    padding: 20px;
 }
 
-#div1, #div2, #div3 {
-    margin: 20px;
+/* Estilo para los divs */
+div {
+    background-color: #ffffff; /* Fondo blanco para los divs */
+    border: 1px solid #4b8c2a; /* Borde verde oscuro */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 15px;
+    margin-bottom: 20px;
 }
 
-#imageView {
-    max-width: 100%;
-    max-height: 500px;
+/* Estilo para tablas */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Colapsar bordes */
+    margin-bottom: 1px;
+}
+
+/* Estilo para el encabezado de la tabla */
+thead {
+    background-color: #4b8c2a; /* Verde oscuro */
+    color: white; /* Texto blanco en el encabezado */
+}
+
+th {
+    padding: 5px;
+    border: 1px solid #808000; /* Borde gris claro */
+}
+
+/* Estilo para las celdas de la tabla */
+td {
+    padding: 1px;
+    border: 1px solid #808000; /* Borde gris claro */
+}
+
+/* Estilo para las filas alternas de la tabla */
+tr:nth-child(even) {
+    background-color: #f5f5dc; /* Color de fondo gris claro para filas pares */
+}
+
+/* Estilo para enlaces */
+a {
+    color: #4b8c2a; /* Verde oscuro para enlaces */
+    text-decoration: none; /* Sin subrayado */
+}
+
+a:hover {
+    text-decoration: underline; /* Subrayar al pasar el mouse */
+}
+
+/* Botones básicos */
+button {
+    background-color: #4b8c2a; /* Verde oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3b6e24; /* Un verde más oscuro al pasar el mouse */
 }
