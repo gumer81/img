@@ -117,6 +117,25 @@ function jva3(){
   const checkboxes = document.querySelectorAll('input[name="chk0"]:checked');
   // Contar la cantidad de checkboxes seleccionados
   const count = checkboxes.length;
-  alert("Número de checkboxes seleccionados: " + count);
-
+  if(count>1){
+    //Si hay 2 checkboxes seleccionados.
+    let img1 = "";
+    for (let i = 0; i < checkboxes.length; i++) {
+      if (i > 0) img1 += "@";
+      img1 += checkboxes[i].value;
+    }
+    const var1 = document.getElementById('input1').value; // Carpeta
+    const var2 = document.getElementById('input2').value; // Usuario
+    const var3 = document.getElementById('input3').value; // Contraseña
+    const var5 = "crp="+var1+"&usr="+var2+"&psw="+var3+"&im1="+img1+"&funcion=fnc3"; // Especificar la función
+    jva001(url, "div2", var5);
+  }
 }
+
+function jva4(){
+  const chk= document.querySelectorAll('input[name="chk0"]');
+  chk.forEach(chk => {
+    chk.checked = true;
+  });
+}
+

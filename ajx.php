@@ -58,6 +58,7 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     $result .= "<tr><th>Chkbox</th></tr>";
 
         // Verificar similitud con anterior
+    $nmr = 0; //Numero de checkbox.
    for ($i = 0; $i < count($mtx); $i++) {
     // Generar la fila de la tabla HTML
     $result .= "<tr>";
@@ -70,24 +71,32 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     $checkbox = "<td>-</td>";
 
     // Verificar similitud con anterior
-    if ($i > 0 &&
+    if ($i > 1 &&
         $mtx[$i]['peso'] == $mtx[$i - 1]['peso'] &&
         $mtx[$i]['dimensiones'] == $mtx[$i - 1]['dimensiones']) {
         // Checkbox si es similar al anterior
-        $checkbox = "<td><input type='checkbox'></td>";
+        $checkbox = "<td><input type='checkbox' name='chk0' value='".$mtx[$i]['nombre']."' ></td>";
+        $nmr++;
     } elseif ($i < count($mtx) - 1 &&
               $mtx[$i]['peso'] == $mtx[$i + 1]['peso'] &&
               $mtx[$i]['dimensiones'] == $mtx[$i + 1]['dimensiones']) {
         // Checkbox si es similar al siguiente
-        $checkbox = "<td><input type='checkbox' name='chk0' onchange='javascript:jva3();' value='".$mtx[$i]['nombre']."' ></td>";
+        $checkbox = "<td><input type='checkbox' name='chk0' value='".$mtx[$i]['nombre']."' ></td>";
+        $nmr++;
     }
 
     // Añadir el checkbox a la fila
         $result .= $checkbox;
         $result .= "</tr>";
     }
-
-    return "$result</table>";
+    $pas= $vrx4+$var001;
+    $result.= "</table>";
+    if($nmr>0) {
+        $result.= "<input type='button' value='X' onclick='javascript:jva4();'>";    //SELECCIONA TODOS LOS Checkbox
+        $result.= "<input type='button' value='UNIR' onclick='javascript:jva3($pas);'>";    //Crea enlaces simbolicos de archivos iguales.
+    }
+    $result.= "<input type='button' value='+' onclick='javascript:jva1($pas);'>";
+    return $result;
 }
 
 // Función para visualiar la imagen.
@@ -127,6 +136,40 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
     }
 }
 
+function fnc3($vrx1, $vrx2, $vrx3, $vrx4) {
+    // Separar las imágenes
+    $img = explode('@', $vrx4);
+
+    if (count($img) < 2) {
+        return "Se necesitan al menos dos imágenes para crear enlaces simbólicos.";
+    }
+
+    $vrx4 = basename($img[0]); // La primera imagen será el origen
+    $errores = [];
+
+    // Iterar sobre las imágenes restantes
+    for ($i = 1; $i < count($img); $i++) {
+        $vrx5 = basename($img[$i]);
+
+        // Crear el comando para cada par de imágenes
+        $cmd = sprintf('rm -f %s%s && ln -s %s%s %s%s',
+                       $vrx1, $vrx5,
+                       $vrx1, $vrx4,
+                       $vrx1, $vrx5);
+
+        $output = shell_exec($cmd);
+
+        if ($output !== null) {
+            $errores[] = "Error al crear enlace simbólico para $vrx5: $output";
+        }
+    }
+
+    if (empty($errores)) {
+        return fnc1($vrx1, $vrx2, $vrx3, 10);
+    } else {
+        return "Hubo errores al crear los enlaces simbólicos: " . implode(", ", $errores);
+    }
+}
 
 // Otras funciones necesarias...
 
