@@ -133,9 +133,27 @@ function jva3(){
 }
 
 function jva4(){
+  //Pasa todos los checkboxes a ok.
   const chk= document.querySelectorAll('input[name="chk0"]');
   chk.forEach(chk => {
     chk.checked = true;
   });
 }
 
+function jva5(){
+  //se ejecuta al cambiar de radio de edicion de imagen.
+  const can1 = document.getElementById("cnv");
+  can1.style.position = "absolute"; // Cambia la posición a absoluta
+  can1.style.top = "0"; // Establece la posición superior
+  can1.style.left = "0"; // Establece la posición izquierda
+  can1.style.pointerEvents = "none"; // Permite clics a través del canvas
+  const img = document.getElementById('img');
+  // Esperar a que la imagen se cargue antes de establecer el tamaño del canvas
+  can1.width = img.clientWidth; // Establece el ancho del canvas igual al de la imagen
+  can1.height = img.clientHeight; // Establece la altura del canvas igual a la de la imagen
+}
+
+function jva6(){
+  //Al darle click a la imagen.
+  alert("hola mundo");
+}

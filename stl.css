@@ -4,7 +4,7 @@ body {
     background-color: #f5f5dc; /* Color crema */
     color: #333; /* Color de texto oscuro */
     margin: 0;
-    padding: 20px;
+    padding: 0px;
 }
 
 /* Estilo para los divs */
@@ -12,8 +12,8 @@ div {
     background-color: #ffffff; /* Fondo blanco para los divs */
     border: 1px solid #4b8c2a; /* Borde verde oscuro */
     border-radius: 5px; /* Bordes redondeados */
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 1px;
+    margin-bottom: 2px;
 }
 
 /* Estilo para tablas */
@@ -30,7 +30,7 @@ thead {
 }
 
 th {
-    padding: 5px;
+    padding: 1px;
     border: 1px solid #808000; /* Borde gris claro */
 }
 
@@ -61,7 +61,7 @@ button {
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 10px 15px;
+    padding: 1px 1px;
     cursor: pointer;
 }
 

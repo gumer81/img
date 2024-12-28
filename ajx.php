@@ -109,28 +109,67 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
 
     // Verificar si el archivo existe
     if (file_exists($filePath)) {
+    // Convertir la ruta del sistema de archivos a una URL relativa
+    $pth = str_replace('/home/www', '', $filePath);
+} else {
+    // Si el archivo no existe, buscar la imagen más grande en la carpeta
+    $cmd = sprintf(
+        "find %s -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' \\) -exec du -b {} + | sort -n -r | head -n 1 | awk '{print $2}'",
+        escapeshellarg($vrx1)
+    );
+
+    // Ejecutar el comando para obtener la imagen más grande
+    $largestImagePath = shell_exec($cmd);
+
+    // Verificar si se encontró una imagen
+    if ($largestImagePath) {
         // Convertir la ruta del sistema de archivos a una URL relativa
-        $pth = str_replace('/home/www', '', $filePath);
-        $rtn000 = "<img src='".htmlspecialchars($pth)."' alt='".htmlspecialchars($vrx4)."' width='800'>";
+        $pth = str_replace('/home/www', '', trim($largestImagePath));
     } else {
-        // Si el archivo no existe, buscar la imagen más grande en la carpeta
-        $cmd = sprintf(
-            "find %s -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' \\) -exec du -b {} + | sort -n -r | head -n 1 | awk '{print $2}'",
-            escapeshellarg($vrx1)
-        );
-
-        // Ejecutar el comando para obtener la imagen más grande
-        $largestImagePath = shell_exec($cmd);
-
-        // Verificar si se encontró una imagen
-        if ($largestImagePath) {
-            // Convertir la ruta del sistema de archivos a una URL relativa
-            $pth = str_replace('/home/www', '', trim($largestImagePath));
-            $rtn000 =  "<img src='" . htmlspecialchars($pth) . "' alt='Imagen más grande' width='80%'>";
-        } else {
-            $rtn000 =  "No hay imágenes disponibles en esta carpeta.";
-        }
+        $rtn000 = "No hay imágenes disponibles en esta carpeta.";
+        echo $rtn000; // Mostrar mensaje si no hay imágenes
+        return; // Terminar la ejecución si no hay imágenes
     }
+}
+
+// Asignar el HTML de la imagen una sola vez
+$rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6()' >";
+
+    $rtn001 = "<table>
+<tr><td ROWSPAN=2><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1' checked>ROTAR</label></td><TD>90ºd</TD></tr>
+<TR><TD>90ºi</TD></TR>
+<TR><TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2' onChange='jva5()'>GIRAR</label></TD>
+<TD><input type='number' id='rtr' value='0' min='-90' max='90' /></TD></TR>
+<TR><TD ROWSPAN=4>
+<label><INPUT TYPE='RADIO' NAME='EDC' VALUE='3' onChange='jva5()'>RECORTAR</label></TD>
+<TD><input type='number' id='rct1' value='0' readonly /></TD></TR>
+<TR><TD><input type='number' id='rct2' value='0' readonly /></TD></TR>
+<TR><TD><input type='number' id='rct3' value='0' readonly /></TD></TR>
+<TR><TD><input type='number' id='rct4' value='0' readonly /></TD></TR>
+<TR><TD ROWSPAN=4><INPUT TYPE='RADIO' NAME='EDC' VALUE='3' onChange='jva5()'>PERSPECTIVA</label></TD>
+    <TD><input type='number' id='prs1' value='0' readonly /></TD></TR>
+<TR><TD><input type='number' id='prs2' value='0' readonly /></TD></TR>
+<TR><TD><input type='number' id='prs3' value='0' readonly /></TD></TR>
+<TR><TD><input type='number' id='prs4' value='0' readonly /></TD></TR>
+
+    </table>";
+    $rtn000 = "<TABLE>
+<TR>
+<TH>EDICION</TH>
+<TH>IMAGEN</TH>
+<TH>TEMPORALES</TH>
+</TR>
+<TR>
+<TD>$rtn001</TD>
+<TD><div id='div'>$rtn000</div></TD>
+<TD></TD>
+</TR>
+<TR>
+<TD></TD>
+<TD></TD>
+<TD></TD>
+</TR>
+    </TABLE>";
     return $rtn000;
 }
 
