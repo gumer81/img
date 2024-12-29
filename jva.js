@@ -140,20 +140,136 @@ function jva4(){
   });
 }
 
-function jva5(){
-  //se ejecuta al cambiar de radio de edicion de imagen.
-  const can1 = document.getElementById("cnv");
-  can1.style.position = "absolute"; // Cambia la posición a absoluta
-  can1.style.top = "0"; // Establece la posición superior
-  can1.style.left = "0"; // Establece la posición izquierda
-  can1.style.pointerEvents = "none"; // Permite clics a través del canvas
+function jva5() {
+  // Se ejecuta al cambiar de radio de edición de imagen.
+  const div1 = document.getElementById("div");
+  div1.style.position = "relative";
+  const cnv1 = document.getElementById("cnv");
+  cnv1.style.position = "absolute"; // Cambia la posición a absoluta
+  cnv1.style.top = "0"; // Establece la posición superior
+  cnv1.style.left = "0"; // Establece la posición izquierda
+  cnv1.style.pointerEvents = "none"; // Permite clics a través del canvas
+
   const img = document.getElementById('img');
+
   // Esperar a que la imagen se cargue antes de establecer el tamaño del canvas
-  can1.width = img.clientWidth; // Establece el ancho del canvas igual al de la imagen
-  can1.height = img.clientHeight; // Establece la altura del canvas igual a la de la imagen
+  if (img.complete) {
+      // Si la imagen ya está cargada
+      cnv1.width = img.clientWidth; // Establece el ancho del canvas igual al de la imagen
+      cnv1.height = img.clientHeight; // Establece la altura del canvas igual a la de la imagen
+  } else {
+      // Si la imagen no está cargada, agregar un evento para cuando se cargue
+      img.onload = function() {
+          cnv1.width = img.clientWidth;
+          cnv1.height = img.clientHeight;
+      };
+  }
 }
 
-function jva6(){
-  //Al darle click a la imagen.
-  alert("hola mundo");
+function jva6(event) {
+    // Al darle click a la imagen.
+  const x = event.offsetX; // Coordenada X relativa a la imagen
+  const y = event.offsetY; // Coordenada Y relativa a la imagen
+  const var1 = document.querySelector('input[name="EDC"]:checked').value;
+  if(var1==3) {
+    jva7(x,y);
+    document.getElementById("prs1").value=0;
+    document.getElementById("prs2").value=0;
+    document.getElementById("prs3").value=0;
+    document.getElementById("prs4").value=0;
+  }
+  if(var1==4) {
+    jva8(x,y);
+    document.getElementById("rct1").value=0;
+    document.getElementById("rct1").value=0;
+    document.getElementById("rct1").value=0;
+    document.getElementById("rct1").value=0;
+  }
+
 }
+
+function jva7(x,y){
+  const cnv1 = document.getElementById('cnv');
+  const ctx1 = cnv1.getContext('2d');
+
+  const a = document.getElementById("rct1").value;
+  const c = document.getElementById("rct3").value;
+
+  if (a != 0 && c != 0) {
+      document.getElementById("rct1").value = 0;
+      document.getElementById("rct2").value = 0;
+      document.getElementById("rct3").value = 0;
+      document.getElementById("rct4").value = 0;
+      ctx1.clearRect(0, 0, cnv1.width, cnv1.height); // Limpiar el canvas
+  }
+
+  if (document.getElementById("rct1").value == 0) {
+      // Se escribe en 0.
+      document.getElementById("rct1").value = x;
+      document.getElementById("rct2").value = y;
+      const v1=0;
+  } else {
+      document.getElementById("rct3").value = x;
+      document.getElementById("rct4").value = y; // Cambiado de x a y para que sea coherente
+      const v1=3;
+  }
+
+  // Hora de dibujar las rectas.
+  ctx1.beginPath();
+
+  // Línea horizontal en Y
+  ctx1.moveTo(0, y); // Desde el borde izquierdo
+  ctx1.lineTo(cnv1.width, y); // Hasta el borde derecho
+
+  // Línea vertical en X
+  ctx1.moveTo(x, 0); // Desde el borde superior
+  ctx1.lineTo(x, cnv1.height); // Hasta el borde inferior
+
+  ctx1.lineWidth = 1; // Grosor de línea
+  ctx1.strokeStyle = 'black'; // Color negro
+  ctx1.stroke();
+}
+
+function jva8(x,y){
+  const cnv1 = document.getElementById('cnv');
+  const ctx1 = cnv1.getContext('2d');
+  let cnd = false; let i=1;
+  do {
+    if (document.getElementById("prs"+i).value==0) {
+        document.getElementById("prs"+i).value=x+","+y;
+        cnd=true;
+    } else {
+        i++;
+        if(i>4){
+          i=1;
+          document.getElementById("prs1").value="0";
+          document.getElementById("prs2").value="0";
+          document.getElementById("prs3").value="0";
+          document.getElementById("prs4").value="0";
+          ctx1.clearRect(0, 0, cnv1.width, cnv1.height);
+        }
+    }
+  } while (!cnd);
+
+  //Dibujar un aspa negra, y una cruz blanca.
+  //punto x,y
+  ctx1.beginPath();
+
+  // Cruz en negro.
+  ctx1.moveTo(x-10, y); // Desde el borde izquierdo
+  ctx1.lineTo(x+10, y); // Hasta el borde derecho
+  ctx1.moveTo(x, y-10); // Desde el borde superior
+  ctx1.lineTo(x, y+10); // Hasta el borde inferior
+  ctx1.lineWidth = 1; // Grosor de línea
+  ctx1.strokeStyle = 'black'; // Color negro
+  ctx1.stroke();
+  // Aspa en blanco.
+  ctx1.moveTo(x-10, y-10); // Desde el borde izquierdo
+  ctx1.lineTo(x+10, y+10); // Hasta el borde derecho
+  ctx1.moveTo(x+10, y-10); // Desde el borde superior
+  ctx1.lineTo(x-10, y+10); // Hasta el borde inferior
+  ctx1.lineWidth = 1; // Grosor de línea
+  ctx1.strokeStyle = 'white'; // Color negro
+  ctx1.stroke();
+}
+

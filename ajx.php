@@ -133,7 +133,7 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
 }
 
 // Asignar el HTML de la imagen una sola vez
-$rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6()' >";
+$rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
 
     $rtn001 = "<table>
 <tr><td ROWSPAN=2><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1' checked>ROTAR</label></td><TD>90ºd</TD></tr>
@@ -146,11 +146,11 @@ $rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchar
 <TR><TD><input type='number' id='rct2' value='0' readonly /></TD></TR>
 <TR><TD><input type='number' id='rct3' value='0' readonly /></TD></TR>
 <TR><TD><input type='number' id='rct4' value='0' readonly /></TD></TR>
-<TR><TD ROWSPAN=4><INPUT TYPE='RADIO' NAME='EDC' VALUE='3' onChange='jva5()'>PERSPECTIVA</label></TD>
-    <TD><input type='number' id='prs1' value='0' readonly /></TD></TR>
-<TR><TD><input type='number' id='prs2' value='0' readonly /></TD></TR>
-<TR><TD><input type='number' id='prs3' value='0' readonly /></TD></TR>
-<TR><TD><input type='number' id='prs4' value='0' readonly /></TD></TR>
+<TR><TD ROWSPAN=4><INPUT TYPE='RADIO' NAME='EDC' VALUE='4' onChange='jva5()'>PERSPECTIVA</label></TD>
+    <TD><input type='text' id='prs1' value='0' readonly /></TD></TR>
+<TR><TD><input type='text' id='prs2' value='0' readonly /></TD></TR>
+<TR><TD><input type='text' id='prs3' value='0' readonly /></TD></TR>
+<TR><TD><input type='text' id='prs4' value='0' readonly /></TD></TR>
 
     </table>";
     $rtn000 = "<TABLE>
@@ -161,7 +161,7 @@ $rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchar
 </TR>
 <TR>
 <TD>$rtn001</TD>
-<TD><div id='div'>$rtn000</div></TD>
+<TD><div id='div'>$rtn000<canvas id='cnv'></canvas></div></TD>
 <TD></TD>
 </TR>
 <TR>
