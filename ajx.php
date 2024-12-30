@@ -102,15 +102,12 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
 // Función para visualiar la imagen.
 function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
     // Ruta del archivo que se intenta cargar
-
     $vrx4 = basename($vrx4); // Encontrar la posición de la última barra
-
-    $filePath = $vrx1.'/'. $vrx4; // Construir la ruta completa del archivo
-
+    $fle = $vrx1.'/'. $vrx4; // Construir la ruta completa del archivo
     // Verificar si el archivo existe
-    if (file_exists($filePath)) {
+    if (file_exists($fle)) {
     // Convertir la ruta del sistema de archivos a una URL relativa
-    $pth = str_replace('/home/www', '', $filePath);
+    $pth = str_replace('/home/www', '', $fle);
 } else {
     // Si el archivo no existe, buscar la imagen más grande en la carpeta
     $cmd = sprintf(
@@ -133,11 +130,26 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
 }
 
 // Asignar el HTML de la imagen una sola vez
-$rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
+//$pth; es la imagen.
+$dim = getimagesize($fle);
+$x = floor(800*$dim[1]/$dim[0]);
+$dmn =$dim[0]."x".$dim[1]."->800x$x";
+//Vamos a ver densidad de imagen.
+$d1 =max($dim[0]/$dim['bits'],$dim[1]/$dim['bits']);
+if($d1>75){
+    //Densidad mayor de 75 entonces
+$d1=$d1."<input type='number'  value='75' min = '75' max='$d1'></input>";
+}
+$rtn000 = "<img src='".htmlspecialchars($pth)."?v".date("YmdHis")."'
+id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
 
     $rtn001 = "<table>
 <tr><td ROWSPAN=2><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1' checked>ROTAR</label></td><TD>90ºd</TD></tr>
 <TR><TD>90ºi</TD></TR>
+<tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1A' onChange='jva5()' >Redimensionar</label></td>
+<TD>$dmn</TD></tr>
+<tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1B' onChange='jva5()' >Comprimir</label></td>
+<TD>$d1</TD></tr>
 <TR><TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2' onChange='jva5()'>GIRAR</label></TD>
 <TD><input type='number' id='rtr' value='0' min='-90' max='90' /></TD></TR>
 <TR><TD ROWSPAN=4>
@@ -151,8 +163,7 @@ $rtn000 = "<img src='".htmlspecialchars($pth)."' id='img' alt='".htmlspecialchar
 <TR><TD><input type='text' id='prs2' value='0' readonly /></TD></TR>
 <TR><TD><input type='text' id='prs3' value='0' readonly /></TD></TR>
 <TR><TD><input type='text' id='prs4' value='0' readonly /></TD></TR>
-
-    </table>";
+    </table><a href='javascript:jva9();'>PROCESAR</a>";
     $rtn000 = "<TABLE>
 <TR>
 <TH>EDICION</TH>
@@ -206,6 +217,75 @@ function fnc3($vrx1, $vrx2, $vrx3, $vrx4) {
     } else {
         return "Hubo errores al crear los enlaces simbólicos: " . implode(", ", $errores);
     }
+}
+
+function fnc4($vrx1, $vrx2,$vrx3,$vrx4,$vrx5){
+    // $vrx1: carpeta global, $vrx2: usuario, $vrx3: contraseña,
+    // $vrx4: nombre de la imagen, $vrx5: arreglo de tamaño y coordenadas
+    // Función para recortar una imagen.
+    $msn = "NOMBRE ARCHIVO ORIGINAL ".$vrx4."<br>";
+    // Dividir $vrx5 en un array usando 'R' como separador
+    $var001 = explode("R", $vrx5);
+    // Subdividir cada elemento usando 'x' como separador
+    for($i = 0; $i < 3; $i++) {
+        $var001[$i] = explode("x", $var001[$i]);
+    }
+    // var001[0]: tamaño del canvas
+    // var001[1]: punto uno en canvas
+    // var001[2]: punto dos en canvas
+
+    // Construir la ruta completa de la imagen
+    $var004 = $vrx1.strtok($vrx4, '?'); //El nombre viene con una huella de fecha, se quita para que funcione.
+
+    // Verificar si la imagen existe
+    if (!file_exists($var004)) {
+        return "Error: La imagen no existe en la ruta especificada.".$msn;
+    }
+
+    // Cargar la imagen
+    $var005 = imagecreatefromjpeg($var004);
+    if (!$var005) {
+        return "Error: No se pudo cargar la imagen.";
+    }
+
+    // Obtener dimensiones de la imagen original
+    $var006 = imagesx($var005);
+    $var007 = imagesy($var005);
+
+    // Calcular la escala entre la imagen original y el canvas
+    $var008 = $var006 / $var001[0][0];
+    $var009 = $var007 / $var001[0][1];
+
+    // Calcular las coordenadas de recorte en la imagen original
+    $var010 = round($var001[1][0] * $var008);
+    $var011 = round($var001[1][1] * $var009);
+    $var012 = round($var001[2][0] * $var008);
+    $var013 = round($var001[2][1] * $var009);
+
+    // Calcular las dimensiones del recorte
+    $var014 = $var012 - $var010;
+    $var015 = $var013 - $var011;
+
+    // Crear una nueva imagen para el recorte
+    $var016 = imagecreatetruecolor($var014, $var015);
+
+    // Copiar la parte seleccionada de la imagen original a la nueva imagen
+    imagecopy($var016, $var005, 0, 0, $var010, $var011, $var014, $var015);
+
+    // Guardar la imagen recortada sobrescribiendo la original
+    if (!imagejpeg($var016, $var004)) {
+        return "Error: No se pudo guardar la imagen recortada.";
+    }
+
+    // Liberar memoria
+    imagedestroy($var005);
+    imagedestroy($var016);
+
+    //return "Imagen recortada y guardada como: " . $var004;
+    $var004 = str_replace('/home/www', '', $var004);
+    $msn.= "Imagen: $var004<br>";
+    return $msn.fnc2($vrx1,$vrx2,$vrx3,$var004);
+
 }
 
 // Otras funciones necesarias...

@@ -164,6 +164,14 @@ function jva5() {
           cnv1.height = img.clientHeight;
       };
   }
+  document.getElementById("prs1").value=0;
+  document.getElementById("prs2").value=0;
+  document.getElementById("prs3").value=0;
+  document.getElementById("prs4").value=0;
+  document.getElementById("rct1").value=0;
+  document.getElementById("rct2").value=0;
+  document.getElementById("rct3").value=0;
+  document.getElementById("rct4").value=0;
 }
 
 function jva6(event) {
@@ -273,3 +281,26 @@ function jva8(x,y){
   ctx1.stroke();
 }
 
+function jva9(){
+  //Carga los valores para procesar los cortes,
+  const var1 = document.getElementById('input1').value; // Carpeta
+  const var2 = document.getElementById('input2').value; // Usuario
+  const var3 = document.getElementById('input3').value; // Contraseña
+  edt = document.querySelector('input[name="EDC"]:checked').value;
+  let img = document.getElementById("img").src;   //Nombre de la imagen.
+  img = img.split('/').pop();
+  if(edt==3){
+    //Recortar la imagen.
+    const cnv = document.getElementById('cnv');  //Dibujo en canva.
+    const dim = cnv.width+"x"+cnv.height;         //Tamaño del canva que lo contiene.
+    //Punto 1 y 2
+    const p1 = document.getElementById("rct1").value+"x"+document.getElementById("rct2").value;
+    const p2 = document.getElementById("rct3").value+"x"+document.getElementById("rct4").value;
+    const var5 = dim+"R"+p1+"R"+p2;
+    //SE MANDA EL ARREGLO
+    const var6 ="crp="+var1+"&usr="+var2+"&psw="+var3+"&img="+img+"&var5="+var5+"&funcion=fnc4";
+    // Especificar la función PHP a llamar
+    // Llamada a jva001
+    jva001(url, "div3", var6);
+  }
+}
