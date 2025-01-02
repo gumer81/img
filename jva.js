@@ -244,7 +244,7 @@ function jva8(x,y){
   let cnd = false; let i=1;
   do {
     if (document.getElementById("prs"+i).value==0) {
-        document.getElementById("prs"+i).value=x+","+y;
+        document.getElementById("prs"+i).value=x+"x"+y;
         cnd=true;
     } else {
         i++;
@@ -289,6 +289,13 @@ function jva9(){
   edt = document.querySelector('input[name="EDC"]:checked').value;
   let img = document.getElementById("img").src;   //Nombre de la imagen.
   img = img.split('/').pop();
+  if(edt==2){
+    //Manda los datos a girar.
+    const var5 = document.getElementById("rtr").value;
+    const var6 ="crp="+var1+"&usr="+var2+"&psw="+var3+"&img="+img+"&var5="+var5+"&funcion=fnc6";
+    jva001(url, "div3", var6);
+  }
+
   if(edt==3){
     //Recortar la imagen.
     const cnv = document.getElementById('cnv');  //Dibujo en canva.
@@ -303,4 +310,83 @@ function jva9(){
     // Llamada a jva001
     jva001(url, "div3", var6);
   }
+  if(edt==4){
+    //Perspectiva.
+    const cnv = document.getElementById('cnv');  //Dibujo en canva.
+    const dim = cnv.width+"x"+cnv.height;         //Tamaño del canva que lo contiene.
+    //Punto 1, 2, 3, 4
+    const p1 = document.getElementById("prs1").value+"R"+document.getElementById("prs2").value;
+    const p2 = document.getElementById("prs3").value+"R"+document.getElementById("prs4").value;
+    const var5 = dim+"R"+p1+"R"+p2;
+    //SE MANDA EL ARREGLO
+    const var6 ="crp="+var1+"&usr="+var2+"&psw="+var3+"&img="+img+"&var5="+var5+"&funcion=fnc7";
+    // Especificar la función PHP a llamar
+    // Llamada a jva001
+    jva001(url, "div3", var6);
+  }
+}
+
+function jva10(var0 = "0"){
+  //Para redimensionar la imagen.
+  if(var0=="0")  edt = document.querySelector('input[name="EDC"]:checked').value;
+  else edt = var0;
+  const var1 = document.getElementById('input1').value; // Carpeta
+  const var2 = document.getElementById('input2').value; // Usuario
+  const var3 = document.getElementById('input3').value; // Contraseña
+  let img = document.getElementById("img").src;   //Nombre de la imagen.
+  let var6="var1="+var1+"&var2="+var2+"&var3="+var3+"&var4="+img;
+  img = img.split('/').pop();
+  let var5="";
+  switch(edt){
+    case 1:
+      //Gira a la izquierda.
+      var5 = "var5=i";
+    break; case 2:
+      //Gira a la derecha.
+      var5 = "var5=d";
+    break; case "1A":
+      //Redimensiona
+      var5 = "var5=R";
+    break; case "1B":
+      //comprime
+      var5 = "var5=C/"+document.getElementById("cmp").value; //Comprimir a esta densida.
+    break; case 2:
+      //Gira segun el angulo indicado.
+      const var7=document.getElementById("rtr").value;  //Angulo a girar.
+      if(var7==0) alert("debe poner un angulo diferente de cero para cambiar.");
+      else var5 = "var5=G/"+document.getElementById("cmp").value; //Comprimir a esta densida.
+    break;
+  }
+  if(var5!=""){
+    var5+="&funcion=fnc5";
+    jva001(url, "div3", var6+"&"+var5);
+  }
+}
+
+function jva11(){
+  const cnv1 = document.getElementById('cnv');
+  const ctx1 = cnv1.getContext('2d');
+  const ang = document.getElementById("rtr").value;
+  ctx1.clearRect(0, 0, cnv1.width, cnv1.height);
+  // Obtener el centro del canvas
+  const centerX = cnv1.width / 2;
+  const centerY = cnv1.height / 2;
+
+  // Convertir el ángulo de grados a radianes
+  const angleInRadians = (ang * Math.PI) / 180;
+
+  // Calcular la longitud de la línea (usamos la diagonal del canvas)
+  const lineLength = Math.sqrt(cnv1.width * cnv1.width + cnv1.height * cnv1.height);
+
+  // Calcular los puntos finales de la línea
+  const endX = centerX + lineLength * Math.cos(angleInRadians);
+  const endY = centerY + lineLength * Math.sin(angleInRadians);
+
+  // Dibujar la línea
+  ctx1.beginPath();
+  ctx1.moveTo(centerX - lineLength * Math.cos(angleInRadians), centerY - lineLength * Math.sin(angleInRadians));
+  ctx1.lineTo(endX, endY);
+  ctx1.strokeStyle = 'red';
+  ctx1.lineWidth = 2;
+  ctx1.stroke();
 }

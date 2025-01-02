@@ -95,7 +95,15 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
         $result.= "<input type='button' value='X' onclick='javascript:jva4();'>";    //SELECCIONA TODOS LOS Checkbox
         $result.= "<input type='button' value='UNIR' onclick='javascript:jva3($pas);'>";    //Crea enlaces simbolicos de archivos iguales.
     }
-    $result.= "<input type='button' value='+' onclick='javascript:jva1($pas);'>";
+
+    if($pas>30){
+        for($i=-3;$i<6;$i++){
+         $p1 = $pas+$i*10;
+         $result.= "<input type='button' value='$p1' onclick='javascript:jva1($p1);'>";
+        }
+
+    } else
+        $result.= "<input type='button' value='+' onclick='javascript:jva1($pas);'>";
     return $result;
 }
 
@@ -107,51 +115,52 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
     // Verificar si el archivo existe
     if (file_exists($fle)) {
     // Convertir la ruta del sistema de archivos a una URL relativa
-    $pth = str_replace('/home/www', '', $fle);
-} else {
-    // Si el archivo no existe, buscar la imagen más grande en la carpeta
-    $cmd = sprintf(
+        $pth = str_replace('/home/www', '', $fle);
+    } else {
+        // Si el archivo no existe, buscar la imagen más grande en la carpeta
+        $cmd = sprintf(
         "find %s -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' \\) -exec du -b {} + | sort -n -r | head -n 1 | awk '{print $2}'",
         escapeshellarg($vrx1)
-    );
+        );
 
-    // Ejecutar el comando para obtener la imagen más grande
-    $largestImagePath = shell_exec($cmd);
+        // Ejecutar el comando para obtener la imagen más grande
+        $largestImagePath = shell_exec($cmd);
 
-    // Verificar si se encontró una imagen
-    if ($largestImagePath) {
-        // Convertir la ruta del sistema de archivos a una URL relativa
-        $pth = str_replace('/home/www', '', trim($largestImagePath));
-    } else {
-        $rtn000 = "No hay imágenes disponibles en esta carpeta.";
-        echo $rtn000; // Mostrar mensaje si no hay imágenes
-        return; // Terminar la ejecución si no hay imágenes
+        // Verificar si se encontró una imagen
+        if ($largestImagePath) {
+            // Convertir la ruta del sistema de archivos a una URL relativa
+            $pth = str_replace('/home/www', '', trim($largestImagePath));
+        } else {
+            $rtn000 = "No hay imágenes disponibles en esta carpeta.";
+            echo $rtn000; // Mostrar mensaje si no hay imágenes
+            return; // Terminar la ejecución si no hay imágenes
+        }
     }
-}
 
-// Asignar el HTML de la imagen una sola vez
-//$pth; es la imagen.
-$dim = getimagesize($fle);
-$x = floor(800*$dim[1]/$dim[0]);
-$dmn =$dim[0]."x".$dim[1]."->800x$x";
-//Vamos a ver densidad de imagen.
-$d1 =max($dim[0]/$dim['bits'],$dim[1]/$dim['bits']);
-if($d1>75){
-    //Densidad mayor de 75 entonces
-$d1=$d1."<input type='number'  value='75' min = '75' max='$d1'></input>";
-}
+    // Asignar el HTML de la imagen una sola vez
+    //$pth; es la imagen.
+    $dim = getimagesize($fle);
+    $x = floor(800*$dim[1]/$dim[0]);
+    $dmn =$dim[0]."x".$dim[1]."->800x$x";
+    //Vamos a ver densidad de imagen.
+    $d1 =max($dim[0]/$dim['bits'],$dim[1]/$dim['bits']);
+    if($d1>75){
+        //Densidad mayor de 75 entonces
+        $d1=$d1."<input type='number'  id='cmp' value='75' min = '75' max='$d1'></input>";
+    }
 $rtn000 = "<img src='".htmlspecialchars($pth)."?v".date("YmdHis")."'
 id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
 
     $rtn001 = "<table>
-<tr><td ROWSPAN=2><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1' checked>ROTAR</label></td><TD>90ºd</TD></tr>
-<TR><TD>90ºi</TD></TR>
-<tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1A' onChange='jva5()' >Redimensionar</label></td>
+<tr><td ROWSPAN=2><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1' checked>ROTAR</label></td>
+    <TD><a href='javascript:jva10(1)'>90ºi</a></TD></tr>
+<TR><TD><a href='javascript:jva10(2)'>90ºd</a></TD></TR>
+<tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1A' onChange='jva10()' >Redimensionar</label></td>
 <TD>$dmn</TD></tr>
-<tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1B' onChange='jva5()' >Comprimir</label></td>
+<tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1B' onChange='jva10()' >Comprimir</label></td>
 <TD>$d1</TD></tr>
 <TR><TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2' onChange='jva5()'>GIRAR</label></TD>
-<TD><input type='number' id='rtr' value='0' min='-90' max='90' /></TD></TR>
+<TD><input type='number' id='rtr' onchange='jva11();' value='0' min='-90' max='90' /></TD></TR>
 <TR><TD ROWSPAN=4>
 <label><INPUT TYPE='RADIO' NAME='EDC' VALUE='3' onChange='jva5()'>RECORTAR</label></TD>
 <TD><input type='number' id='rct1' value='0' readonly /></TD></TR>
@@ -286,6 +295,191 @@ function fnc4($vrx1, $vrx2,$vrx3,$vrx4,$vrx5){
     $msn.= "Imagen: $var004<br>";
     return $msn.fnc2($vrx1,$vrx2,$vrx3,$var004);
 
+}
+
+function fnc5($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {
+    // $vrx1: carpeta global, $vrx2: usuario, $vrx3: contraseña,
+    // $vrx4: nombre del archivo
+    // $vrx5: matriz de parámetros para ejecutar lo que pide.
+    $msn = ""; // Mensaje sin novedad.
+    $var004 = $vrx1 . basename(strtok($vrx4, '?')); // El nombre viene con una huella de fecha, se quita para que funcione.
+    $c = null;//Constante de compresion.
+    // Cargar la imagen
+    $img = imagecreatefromjpeg($var004);
+    if (!$img) {
+        $msn = "$var004 Error: No se pudo cargar la imagen (LN302).";
+        return $msn;
+    }
+    $msn .= "LN 305 ".$vrx5."<BR>";
+    switch ($vrx5) {
+        case "i":
+            // Girar la imagen 90º a la izquierda.
+            $img = imagerotate($img, 90, 0);
+            break;
+        case "d":
+            // Girar la imagen 90º a la derecha.
+            $img = imagerotate($img, -90, 0);
+            break;
+        case "R":
+            // Redimensionar a 800px de ancho manteniendo la proporción.
+            $width = imagesx($img);
+            $height = imagesy($img);
+            $new_width = 800;
+            $new_height = floor($height * ($new_width / $width));
+            $new_image = imagecreatetruecolor($new_width, $new_height);
+            imagecopyresampled($new_image, $img, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+            imagedestroy($img); // Liberar memoria de la imagen original
+            $img = $new_image; // Asignar la nueva imagen redimensionada
+            break;
+        default:
+            $tmp = explode("/", $vrx5);
+            $msn .= "tmp : $c ln 328 ".$tmp[0]." / ".$tmp[1];
+            switch ($tmp[0]) {
+                case "C":
+                    // Obtener el ancho original para calcular la compresión
+                    $c =$tmp[1];
+                    $var004 = escapeshellarg($var004); // Usamos $var004 que es la ruta de la imagen original
+                    $cmd ="convert $var004 -density $c"."x"."$c $var004";
+                    $msn .= "<br>No se manda la compresion: $cmd";
+                    /*$sld = shell_exec($cmd);
+                    if ( $sld === null) {
+                        $msn .= "La imagen se ha comprimido exitosamente.";
+                        $c=true;
+                    } else {
+                        $msn .= "<br>La compresión de la imagen falló: $sld<br>$cmd";
+                    }*/
+                break; case "G":
+                    // Girar según el ángulo especificado
+                    if (isset($tmp[1]) && is_numeric($tmp[1])) {
+                        $g = intval($tmp[1]); // Asegurarse de que sea un número entero
+                        $img = imagerotate($img, -$g, 0);
+                    } else {
+                        $msn.= "Error: Ángulo no válido para rotación.";
+                    }
+                    break;
+                default:
+                    $msn.= "<br>No hace nada ln 359";
+            }
+            break;
+    }
+
+    // Guardar la imagen modificada (si no se ha guardado ya en caso de compresión)
+    if (!$c) {
+        if(!imagejpeg($img, $var004)) $msn.="Error: No se pudo guardar la imagen modificada. ln 348";
+        else $msn .="<br>Se volvio a guardar";
+    }
+
+    // Liberar memoria
+    imagedestroy($img);
+    return "$msn<br>var004: $var004<br>".fnc2($vrx1, $vrx2, $vrx3, $var004);
+}
+
+function fnc6($vrx1, $vrx2, $vrx3, $vrx4, $vrx5){
+    //Para hacer los giros.
+    // $vrx1: carpeta global, $vrx2: usuario, $vrx3: contraseña,
+    // $vrx4: nombre del archivo
+    // $vrx5: Angulo inverso a girar.
+    $msn = "Img: $vrx4 Giro: $vrx5"; // Mensaje sin novedad.
+    $var004 = $vrx1 . basename(strtok($vrx4, '?')); // El nombre viene con una huella de fecha, se quita para que funcione.
+
+    // Verificar si el archivo existe
+    if (!file_exists($var004)) {
+        $msn.= "Error: El archivo no existe: $var004";
+    }
+
+    // Cargar la imagen
+    $img = @imagecreatefromjpeg($var004); // Cambia a imagecreatefrompng o imagecreatefromgif según el formato
+    if (!$img) {
+        $msn.=  "Error: No se pudo cargar la imagen $var004.";
+    }
+
+    // Aplicar el giro
+    $img1 = imagerotate($img, $vrx5, 0);
+    if (!$img1) {
+        imagedestroy($img);
+        $msn.=  "Error: No se pudo girar la imagen $var004.";
+    }
+
+    // Guardar la imagen girada
+    if (!imagejpeg($img1, $var004)) { // Cambia el formato de guardado si es necesario
+        $msn.= "Error: No se pudo guardar la imagen modificada.";
+    } else {
+        $msn.= "La imagen se giró y guardó correctamente.";
+    }
+
+    // Liberar memoria
+    imagedestroy($img);
+    imagedestroy($img1);
+
+    // Llamar a fnc2 con el nombre de archivo limpio
+    return "$msn<br>".fnc2($vrx1, $vrx2, $vrx3, $var004);
+}
+
+function fnc7($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {
+    $msn = "";
+    $var002 = $vrx1 . basename(strtok($vrx4, '?'));
+
+    $var003 = array_map(fn($point) => array_map('floatval', explode("x", $point)), explode("R", $vrx5));
+
+    $cnW = $var003[0][0];
+    $cnH = $var003[0][1];
+
+    if (!file_exists($var002)) {
+        $msn = "Error: El archivo no existe: $var002";
+    }
+
+    if ($msn === "") {
+        $var004 = @imagecreatefromjpeg($var002);
+        if (!$var004) {
+            $msn = "Error: No se pudo cargar la imagen $var002.";
+        } else {
+            $msn .= "Imagen cargada correctamente. ";
+        }
+    }
+
+    if ($msn === "" || strpos($msn, "Imagen cargada correctamente") !== false) {
+        if ($cnW <= 0 || $cnH <= 0) {
+            $msn .= "Error: Dimensiones de lienzo inválidas ($cnW x $cnH). ";
+        } else {
+            $var005 = imagecreatetruecolor($cnW, $cnH);
+            if (!$var005) {
+                $msn .= "Error: No se pudo crear el nuevo lienzo. ";
+            } else {
+                $result = imagecopyresampled(
+                    $var005,
+                    $var004,
+                    0, 0, 0, 0,
+                    $cnW,
+                    $cnH,
+                    imagesx($var004),
+                    imagesy($var004)
+                );
+                if (!$result) {
+                    $msn .= "Error: Fallo en imagecopyresampled. ";
+                } else {
+                    $msn .= "Perspectiva ajustada correctamente. ";
+                }
+            }
+        }
+    }
+
+    if (strpos($msn, "Perspectiva ajustada correctamente") !== false) {
+        if (!imagejpeg($var005, $var002)) {
+            $msn .= "Error: No se pudo guardar la imagen ajustada. ";
+        } else {
+            $msn .= "Imagen guardada correctamente en: $var002. ";
+        }
+
+        imagedestroy($var004);
+        imagedestroy($var005);
+    }
+
+    if (strpos($msn, "Error") === false) {
+        $msn = "La perspectiva se ajustó correctamente y se guardó en: $var002";
+    }
+
+    if ($msn != "") return $msn;
+    else return fnc2($vrx1, $vrx2, $vrx3, $var002);
 }
 
 // Otras funciones necesarias...
