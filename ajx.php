@@ -4,7 +4,6 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     // Número de imágenes por grupo
     //var1 carpeta global var2, usuario , varx3 clave, varx4 desde que orden de archivo mas grande.
     $var001 = 10;
-
     // Calcular el índice inicial según $vrx4
     $var002 = $vrx4 * $var001;
 
@@ -30,15 +29,12 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     // Procesar la salida y almacenar en una matriz
     $lns = explode("\n", trim($out));
     $mtx = []; // Matriz para almacenar información de las imágenes
-
     foreach ($lns as $lin) {
         if (preg_match('/(\d+)\s+(.*)/', $lin, $mat)) {
             $peso = round($mat[1] / 1024, 2); // Tamaño en KB
             $imagePath = trim($mat[2]);
-
             // Convertir la ruta del sistema de archivos a una URL relativa
             $pth = str_replace('/home/www', '', $imagePath);
-
             // Obtener las dimensiones de la imagen
             list($x, $y) = getimagesize($imagePath);
 
@@ -50,15 +46,13 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
             ];
         }
     }
-
     // Generar la salida HTML
     $result = "<table valign='top'>";
     $result .= "<tr><th rowspan='3'>Imagen</th><th>Tamaño (KB)</th></tr>";
     $result .= "<tr><th>AltxAnc</th></tr>";
     $result .= "<tr><th>Chkbox</th></tr>";
-
-        // Verificar similitud con anterior
-    $nmr = 0; //Numero de checkbox.
+   // Verificar similitud con anterior
+   $nmr = 0; //Numero de checkbox.
    for ($i = 0; $i < count($mtx); $i++) {
     // Generar la fila de la tabla HTML
     $result .= "<tr>";
@@ -66,11 +60,10 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
     $result .= "<img src='".$mtx[$i]['nombre']."' width='70'></a></td>";
     $result .= "<td>" . $mtx[$i]['peso'] . " KB</td></tr><tr>";
     $result .= "<td>" . $mtx[$i]['dimensiones'] . "</td></tr>"; // Agregar dimensiones
-
     // Inicializar el checkbox como un guion
     $checkbox = "<td>-</td>";
-
     // Verificar similitud con anterior
+
     if ($i > 0 &&
         $mtx[$i]['peso'] == $mtx[$i - 1]['peso'] &&
         $mtx[$i]['dimensiones'] == $mtx[$i - 1]['dimensiones']) {
@@ -89,21 +82,28 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
         $result .= $checkbox;
         $result .= "</tr>";
     }
-    $pas= $vrx4+$var001;
-    $result.= "</table>";
+        $result.= "</table>";
     if($nmr>0) {
         $result.= "<input type='button' value='X' onclick='javascript:jva4();'>";    //SELECCIONA TODOS LOS Checkbox
-        $result.= "<input type='button' value='UNIR' onclick='javascript:jva3($pas);'>";    //Crea enlaces simbolicos de archivos iguales.
+        $result.= "<input type='button' value='UNIR' onclick='javascript:jva3($vrx4);'>";    //Crea enlaces simbolicos de archivos iguales.
     }
 
-    if($pas>30){
+
+    if($vrx4>30){
         for($i=-3;$i<6;$i++){
-         $p1 = $pas+$i*10;
+         $p1 = $vrx4+$i*$var001;
          $result.= "<input type='button' value='$p1' onclick='javascript:jva1($p1);'>";
         }
 
-    } else
-        $result.= "<input type='button' value='+' onclick='javascript:jva1($pas);'>";
+    } else{
+        $result.= "<input type='button' value='+' onclick='javascript:jva1($vrx4);'>";
+        for($i=0;$i<6;$i++){
+            $p1 = $vrx4+$i*$var001;
+            $result.= "<input type='button' value='$p1' onclick='javascript:jva1($p1);'>";
+        }
+    }
+
+    $result.="<input type='text' id='PA1' value='$vrx4' readonly hidden>";
     return $result;
 }
 
@@ -416,70 +416,72 @@ function fnc6($vrx1, $vrx2, $vrx3, $vrx4, $vrx5){
 }
 
 function fnc7($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {
-    $msn = "";
+    // Para hacer las transformaciones de perspectiva.
+    // $vrx1: carpeta global, $vrx2: usuario, $vrx3: contraseña,
+    // $vrx4: nombre del archivo
+    // $vrx5: Puntos de perspectiva
     $var002 = $vrx1 . basename(strtok($vrx4, '?'));
-
     $var003 = array_map(fn($point) => array_map('floatval', explode("x", $point)), explode("R", $vrx5));
 
     $cnW = $var003[0][0];
     $cnH = $var003[0][1];
 
     if (!file_exists($var002)) {
-        $msn = "Error: El archivo no existe: $var002";
+        return "Error: El archivo no existe: $var002";
     }
 
-    if ($msn === "") {
-        $var004 = @imagecreatefromjpeg($var002);
-        if (!$var004) {
-            $msn = "Error: No se pudo cargar la imagen $var002.";
-        } else {
-            $msn .= "Imagen cargada correctamente. ";
-        }
+    $var004 = @imagecreatefromjpeg($var002);
+    if (!$var004) {
+        return "Error: No se pudo cargar la imagen $var002.";
     }
 
-    if ($msn === "" || strpos($msn, "Imagen cargada correctamente") !== false) {
-        if ($cnW <= 0 || $cnH <= 0) {
-            $msn .= "Error: Dimensiones de lienzo inválidas ($cnW x $cnH). ";
-        } else {
-            $var005 = imagecreatetruecolor($cnW, $cnH);
-            if (!$var005) {
-                $msn .= "Error: No se pudo crear el nuevo lienzo. ";
-            } else {
-                $result = imagecopyresampled(
-                    $var005,
-                    $var004,
-                    0, 0, 0, 0,
-                    $cnW,
-                    $cnH,
-                    imagesx($var004),
-                    imagesy($var004)
-                );
-                if (!$result) {
-                    $msn .= "Error: Fallo en imagecopyresampled. ";
-                } else {
-                    $msn .= "Perspectiva ajustada correctamente. ";
-                }
-            }
-        }
-    }
+    $srcW = imagesx($var004);
+    $srcH = imagesy($var004);
 
-    if (strpos($msn, "Perspectiva ajustada correctamente") !== false) {
-        if (!imagejpeg($var005, $var002)) {
-            $msn .= "Error: No se pudo guardar la imagen ajustada. ";
-        } else {
-            $msn .= "Imagen guardada correctamente en: $var002. ";
-        }
-
+    $var005 = imagecreatetruecolor($srcW, $srcH);
+    if (!$var005) {
         imagedestroy($var004);
-        imagedestroy($var005);
+        return "Error: No se pudo crear el nuevo lienzo.";
     }
 
-    if (strpos($msn, "Error") === false) {
-        $msn = "La perspectiva se ajustó correctamente y se guardó en: $var002";
+    // Definir los puntos de origen y destino para la transformación
+    $src = [
+        intval($var003[1][0] * $srcW/$cnW), intval($var003[1][1] * $srcH/$cnH),
+        intval($var003[2][0] * $srcW/$cnW), intval($var003[2][1] * $srcH/$cnH),
+        intval($var003[3][0] * $srcW/$cnW), intval($var003[3][1] * $srcH/$cnH),
+        intval($var003[4][0] * $srcW/$cnW), intval($var003[4][1] * $srcH/$cnH)
+    ];
+    $dst = [
+        0, 0,
+        $srcW, 0,
+        $srcW, $srcH,
+        0, $srcH
+    ];
+
+    if (!extension_loaded('imagick')) {
+        $msn.= "Error: La extensión Imagick no está instalada.";
+    } else {
+        //for($i=48;$i<17;$i++)$pint[$i]=$dst[$i-8];
+        $pnt[0]= $src[0]; $pnt[1]= $src[1];
+        $pnt[2]= $dst[0]; $pnt[3]= $dst[1];
+        $pnt[4]= $src[2]; $pnt[5]= $src[3];
+        $pnt[6]= $dst[2]; $pnt[7]= $dst[3];
+        $pnt[8]= $src[4]; $pnt[9]= $src[5];
+        $pnt[10]= $dst[4]; $pnt[11]= $dst[5];
+        $pnt[12]= $src[6]; $pnt[13]= $src[7];
+        $pnt[14]= $dst[6]; $pnt[15]= $dst[7];
+        $image = new Imagick($var002);
+        $image->distortImage(Imagick::DISTORTION_PERSPECTIVE, $pnt, true);
+        $image->writeImage($var002);
+        $image->clear();
+        $image->destroy();
     }
 
-    if ($msn != "") return $msn;
-    else return fnc2($vrx1, $vrx2, $vrx3, $var002);
+
+    $cmd = "convert $var002 -distort Perspective '$cmd' $var002";
+
+    $msn .= "$cmd<br>La perspectiva se ajustó correctamente y se guardó en: $var002";
+    return $msn . "<br>" . fnc2($vrx1, $vrx2, $vrx3, $var002);
 }
 
 // Otras funciones necesarias...
