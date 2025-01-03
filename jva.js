@@ -112,7 +112,7 @@ function jva2(var0){
   jva001(url, "div3", var5);
 }
 
-function jva3(){
+function jva3(pas){
   //Si hay mas de uncheckbox en checked del nombre chk0 se ejecuta
   const checkboxes = document.querySelectorAll('input[name="chk0"]:checked');
   // Contar la cantidad de checkboxes seleccionados
@@ -127,7 +127,7 @@ function jva3(){
     const var1 = document.getElementById('input1').value; // Carpeta
     const var2 = document.getElementById('input2').value; // Usuario
     const var3 = document.getElementById('input3').value; // Contraseña
-    const var5 = "crp="+var1+"&usr="+var2+"&psw="+var3+"&im1="+img1+"&funcion=fnc3"; // Especificar la función
+    const var5 = "crp="+var1+"&usr="+var2+"&psw="+var3+"&img="+img1+"&pas="+pas+"&funcion=fnc3"; // Especificar la función
     jva001(url, "div2", var5);
   }
 }

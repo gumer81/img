@@ -23,7 +23,7 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
 
     // Verificar si hay salida
     if (empty($out)) {
-        return "No hay imágenes disponibles en este rango.";
+        return "No hay imágenes disponibles en este rango. $vrx4 / $var002";
     }
 
     // Procesar la salida y almacenar en una matriz
@@ -96,14 +96,11 @@ function fnc1($vrx1, $vrx2, $vrx3, $vrx4) {
         }
 
     } else{
-        $result.= "<input type='button' value='+' onclick='javascript:jva1($vrx4);'>";
         for($i=0;$i<6;$i++){
             $p1 = $vrx4+$i*$var001;
             $result.= "<input type='button' value='$p1' onclick='javascript:jva1($p1);'>";
         }
     }
-
-    $result.="<input type='text' id='PA1' value='$vrx4' readonly hidden>";
     return $result;
 }
 
@@ -193,10 +190,12 @@ id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
     return $rtn000;
 }
 
-function fnc3($vrx1, $vrx2, $vrx3, $vrx4) {
+function fnc3($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {
     // Separar las imágenes
-    $img = explode('@', $vrx4);
+    //vrx5 este es el paso que se trabajo.
 
+    $img = explode('@', $vrx4);
+    //$pas = $vrx5/10; //10 es el numero de imagenes por pantalla
     if (count($img) < 2) {
         return "Se necesitan al menos dos imágenes para crear enlaces simbólicos.";
     }
@@ -206,13 +205,13 @@ function fnc3($vrx1, $vrx2, $vrx3, $vrx4) {
 
     // Iterar sobre las imágenes restantes
     for ($i = 1; $i < count($img); $i++) {
-        $vrx5 = basename($img[$i]);
+        $var001 = basename($img[$i]);
 
         // Crear el comando para cada par de imágenes
         $cmd = sprintf('rm -f %s%s && ln -s %s%s %s%s',
-                       $vrx1, $vrx5,
+                       $vrx1, $var001,
                        $vrx1, $vrx4,
-                       $vrx1, $vrx5);
+                       $vrx1, $var001);
 
         $output = shell_exec($cmd);
 
@@ -222,10 +221,11 @@ function fnc3($vrx1, $vrx2, $vrx3, $vrx4) {
     }
 
     if (empty($errores)) {
-        return fnc1($vrx1, $vrx2, $vrx3, 10);
+        return fnc1($vrx1, $vrx2, $vrx3, $vrx5);
     } else {
         return "Hubo errores al crear los enlaces simbólicos: " . implode(", ", $errores);
     }
+
 }
 
 function fnc4($vrx1, $vrx2,$vrx3,$vrx4,$vrx5){
