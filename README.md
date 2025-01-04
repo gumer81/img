@@ -1,0 +1,2 @@
+Editor simple de imagenes, gira 90 grados derecha izquierda, redimensiona a 800x proporcion, comprime las imagenes (no funciona), rota de -90 a 90 grados, segun la linea de referencia roja que se crea.
+Se aclara oscurece, se recorta, paralela a las cordenadas con dos puntos de referencia. Se distorciona con 4 puntos de refencia que van a los puntos 0,0, esquina superior izquierda, esquina inferior izquierda, esquina inferior derecha.
