@@ -390,3 +390,13 @@ function jva11(){
   ctx1.lineWidth = 2;
   ctx1.stroke();
 }
+
+function jva12(var0=0){
+  //aclara u oscurece, 0 o 1,
+ // Carpeta@Usuario@Contraseña
+  const var000 =document.getElementById('input1').value+"@"+document.getElementById('input2').value+"@"+document.getElementById('input3').value;
+  const var001 = document.getElementById("img").src;  //imagen de trabajo.
+  let var002 ="v0="+var000+"&v1="+var001+"&v2="+var0;
+  var002+="&funcion=fnc8";
+  jva001(url, "div3", var002);
+}

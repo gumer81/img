@@ -156,8 +156,10 @@ id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
 <TD>$dmn</TD></tr>
 <tr><td><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1B' onChange='jva10()' >Comprimir</label></td>
 <TD>$d1</TD></tr>
-<TR><TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2' onChange='jva5()'>GIRAR</label></TD>
+<TR><TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2' onChange='jva5()'>ROTAR</label></TD>
 <TD><input type='number' id='rtr' onchange='jva11();' value='0' min='-90' max='90' /></TD></TR>
+<TR><TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2A' onChange='jva12(0)'>ACLARAR</label></TD>
+<TD><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='2B' onChange='jva12(1)'>OSCURECER</label></TD></TR>
 <TR><TD ROWSPAN=4>
 <label><INPUT TYPE='RADIO' NAME='EDC' VALUE='3' onChange='jva5()'>RECORTAR</label></TD>
 <TD><input type='number' id='rct1' value='0' readonly /></TD></TR>
@@ -484,6 +486,39 @@ function fnc7($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {
     return $msn . "<br>" . fnc2($vrx1, $vrx2, $vrx3, $var002);
 }
 
+function fnc8($vrx0,$vrx1,$vrx2){
+    //$vrx0 = direccion@usuario@Rcontraseña
+    //$vrx1 = imagen de trabajo.
+    //$vrx2 = que se hace, aclarar u oscurecer.
+
+    try {
+        // Procesar los valores directamente sin variables innecesarias
+        $var000 = explode("@", $vrx0);
+        $var001 = $var000[0].basename(strtok($vrx1, '?')); // Nombre de la imagen sin fecha
+
+        // Cargar la imagen
+        $var002= new Imagick($var001);
+
+        // Configurar brillo según la acción (aclarar u oscurecer)
+        $var003 = ($vrx2 == 0) ? 105 : 95;  // Aclarar: 105, Oscurecer: 95
+        $var002->modulateImage($var003, 100, 100); // Aplicar el ajuste de brillo
+
+        // Sobrescribir la imagen original con la versión modificada
+        $var002->writeImage($var001); // Sobrescribir la imagen original
+
+        // Liberar recursos
+        $var002->clear();
+        $var002->destroy();
+
+        // Devolver mensaje de éxito
+        $msn = "Imagen " . ($vrx2 == 0 ? "aclarada" : "oscurecida") . " con éxito.";
+        return $msn.fnc2($var000[0], $var000[1], $var000[2], $var001);
+    } catch (Exception $e) {
+        // Manejo de errores
+        return "Error al procesar la imagen: " . $e->getMessage();
+    }
+
+}
 // Otras funciones necesarias...
 
 // Verificar si la variable 'funcion' está presente en $_POST
