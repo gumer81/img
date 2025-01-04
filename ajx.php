@@ -110,6 +110,7 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
     $vrx4 = basename($vrx4); // Encontrar la posición de la última barra
     $fle = $vrx1.'/'. $vrx4; // Construir la ruta completa del archivo
     // Verificar si el archivo existe
+    $msn ="";
     if (file_exists($fle)) {
     // Convertir la ruta del sistema de archivos a una URL relativa
         $pth = str_replace('/home/www', '', $fle);
@@ -127,10 +128,9 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
         if ($largestImagePath) {
             // Convertir la ruta del sistema de archivos a una URL relativa
             $pth = str_replace('/home/www', '', trim($largestImagePath));
+            $fle = $vrx1."/".basename($pth);
         } else {
-            $rtn000 = "No hay imágenes disponibles en esta carpeta.";
-            echo $rtn000; // Mostrar mensaje si no hay imágenes
-            return; // Terminar la ejecución si no hay imágenes
+            $msn = "No hay imágenes disponibles en esta carpeta.";
         }
     }
 
@@ -147,6 +147,7 @@ function fnc2($vrx1, $vrx2, $vrx3, $vrx4) {
     }
 $rtn000 = "<img src='".htmlspecialchars($pth)."?v".date("YmdHis")."'
 id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
+
 
     $rtn001 = "<table>
 <tr><td ROWSPAN=2><label><INPUT TYPE='RADIO' NAME='EDC' VALUE='1' checked>ROTAR</label></td>
@@ -189,7 +190,8 @@ id='img' alt='".htmlspecialchars($vrx4)."' width='80%' onClick='jva6(event)' >";
 <TD></TD>
 </TR>
     </TABLE>";
-    return $rtn000;
+
+    return $msn."<br>".$rtn000;
 }
 
 function fnc3($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {

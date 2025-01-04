@@ -29,5 +29,5 @@
 </html>
 <script>
 jva1(0);//Carga la lista de archivos.
-//jva2(0);//Carga la imagen mas grande de la lista de archivos.
+jva2(0);//Carga la imagen mas grande de la lista de archivos.
 </script>
