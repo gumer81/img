@@ -344,14 +344,14 @@ function fnc5($vrx1, $vrx2, $vrx3, $vrx4, $vrx5) {
                     $c =$tmp[1];
                     $var004 = escapeshellarg($var004); // Usamos $var004 que es la ruta de la imagen original
                     $cmd ="convert $var004 -density $c"."x"."$c $var004";
-                    $msn .= "<br>No se manda la compresion: $cmd";
-                    /*$sld = shell_exec($cmd);
+                    $msn .= "<br>$cmd<br>";
+                    $sld = shell_exec($cmd);
                     if ( $sld === null) {
                         $msn .= "La imagen se ha comprimido exitosamente.";
                         $c=true;
                     } else {
                         $msn .= "<br>La compresión de la imagen falló: $sld<br>$cmd";
-                    }*/
+                    }
                 break; case "G":
                     // Girar según el ángulo especificado
                     if (isset($tmp[1]) && is_numeric($tmp[1])) {
